@@ -773,6 +773,9 @@ Subtree ts_subtree_edit(Subtree self, const TSInputEdit *input_edit, SubtreePool
       ) && (
         !invalidate_first_row ||
         child_left.extent.row > entry.tree->ptr->padding.extent.row
+      ) && (
+      	!ts_subtree_depends_on_column(*child) ||
+        child_left.extent.row > edit.old_end.extent.row
       )) {
         break;
       }
