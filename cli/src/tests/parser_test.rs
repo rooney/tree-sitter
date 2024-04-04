@@ -541,12 +541,39 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
     );
 
     let mut recorder = ReadRecorder::new(&code);
-    let tree = parser
+    let mut tree = parser
         .parse_with(&mut |i, _| recorder.read(i), Some(&tree))
         .unwrap();
 
     assert_eq!(tree.root_node().to_sexp(), "(x_is_at (even_column))",);
     assert_eq!(recorder.strings_read(), vec!["\n  x\n"]);
+
+    perform_edit(
+        &mut tree,
+        &mut code,
+        &Edit {
+            position: 1,
+            deleted_length: 0,
+            inserted_text: b"\n".to_vec(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        code,
+        b"
+
+  x
+    "
+    );
+
+    let mut recorder = ReadRecorder::new(&code);
+    let tree = parser
+        .parse_with(&mut |i, _| recorder.read(i), Some(&tree))
+        .unwrap();
+
+    assert_eq!(tree.root_node().to_sexp(), "(x_is_at (even_column))",);
+    assert_eq!(recorder.strings_read(), vec!["\n\n  x"]);
 }
 
 #[test]

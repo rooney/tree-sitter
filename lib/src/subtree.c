@@ -678,6 +678,7 @@ Subtree ts_subtree_edit(Subtree self, const TSInputEdit *input_edit, SubtreePool
     bool is_noop = edit.old_end.bytes == edit.start.bytes && edit.new_end.bytes == edit.start.bytes;
     bool is_pure_insertion = edit.old_end.bytes == edit.start.bytes;
     bool invalidate_first_row = ts_subtree_depends_on_column(*entry.tree);
+    bool column_shifted = edit.new_end.extent.column != edit.old_end.extent.column;
 
     Length size = ts_subtree_size(*entry.tree);
     Length padding = ts_subtree_padding(*entry.tree);
@@ -775,6 +776,7 @@ Subtree ts_subtree_edit(Subtree self, const TSInputEdit *input_edit, SubtreePool
         child_left.extent.row > entry.tree->ptr->padding.extent.row
       ) && (
       	!ts_subtree_depends_on_column(*child) ||
+        !column_shifted ||
         child_left.extent.row > edit.old_end.extent.row
       )) {
         break;
