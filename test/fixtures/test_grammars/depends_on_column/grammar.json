@@ -1,0 +1,51 @@
+{
+  "name": "depends_on_column",
+  "rules": {
+    "x_is_at": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[ \\r\\n]*"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "odd_column"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "even_column"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "x"
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [
+    {
+      "type": "SYMBOL",
+      "name": "odd_column"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "even_column"
+    }
+  ],
+  "inline": [],
+  "supertypes": []
+}

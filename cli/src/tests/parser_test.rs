@@ -503,6 +503,53 @@ h + i
 }
 
 #[test]
+fn test_parsing_after_editing_tree_that_depends_on_column_position() {
+    let dir = fixtures_dir()
+        .join("test_grammars")
+        .join("depends_on_column");
+    let grammar = fs::read_to_string(dir.join("grammar.json")).unwrap();
+    let (grammar_name, parser_code) = generate_parser_for_grammar(&grammar).unwrap();
+
+    let mut parser = Parser::new();
+    parser
+        .set_language(&get_test_language(&grammar_name, &parser_code, Some(&dir)))
+        .unwrap();
+
+    let mut code = b"
+ x
+    "
+    .to_vec();
+    let mut tree = parser.parse(&code, None).unwrap();
+    assert_eq!(tree.root_node().to_sexp(), "(x_is_at (odd_column))");
+
+    perform_edit(
+        &mut tree,
+        &mut code,
+        &Edit {
+            position: 1,
+            deleted_length: 0,
+            inserted_text: b" ".to_vec(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        code,
+        b"
+  x
+    "
+    );
+
+    let mut recorder = ReadRecorder::new(&code);
+    let tree = parser
+        .parse_with(&mut |i, _| recorder.read(i), Some(&tree))
+        .unwrap();
+
+    assert_eq!(tree.root_node().to_sexp(), "(x_is_at (even_column))",);
+    assert_eq!(recorder.strings_read(), vec!["\n  x\n"]);
+}
+
+#[test]
 fn test_parsing_after_detecting_error_in_the_middle_of_a_string_token() {
     let mut parser = Parser::new();
     parser.set_language(&get_language("python")).unwrap();
