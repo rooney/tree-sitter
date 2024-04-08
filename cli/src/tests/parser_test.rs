@@ -5,6 +5,7 @@ use super::helpers::{
 };
 use crate::{
     generate::generate_parser_for_grammar,
+    generate::load_grammar_file,
     parse::{perform_edit, Edit},
     tests::helpers::fixtures::fixtures_dir,
 };
@@ -507,8 +508,10 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
     let dir = fixtures_dir()
         .join("test_grammars")
         .join("depends_on_column");
-    let grammar = fs::read_to_string(dir.join("grammar.json")).unwrap();
-    let (grammar_name, parser_code) = generate_parser_for_grammar(&grammar).unwrap();
+
+    let grammar_json = load_grammar_file(&dir.join("grammar.js"), None).unwrap();
+    let (grammar_name, parser_code) =
+        generate_parser_for_grammar(grammar_json.as_str()).unwrap();
 
     let mut parser = Parser::new();
     parser
