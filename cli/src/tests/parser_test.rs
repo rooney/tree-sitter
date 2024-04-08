@@ -515,10 +515,7 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
         .set_language(&get_test_language(&grammar_name, &parser_code, Some(&dir)))
         .unwrap();
 
-    let mut code = b"
- x
-    "
-    .to_vec();
+    let mut code = b"\n x".to_vec();
     let mut tree = parser.parse(&code, None).unwrap();
     assert_eq!(tree.root_node().to_sexp(), "(x_is_at (odd_column))");
 
@@ -533,12 +530,7 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
     )
     .unwrap();
 
-    assert_eq!(
-        code,
-        b"
-  x
-    "
-    );
+    assert_eq!(code, b"\n  x");
 
     let mut recorder = ReadRecorder::new(&code);
     let mut tree = parser
@@ -546,7 +538,7 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
         .unwrap();
 
     assert_eq!(tree.root_node().to_sexp(), "(x_is_at (even_column))",);
-    assert_eq!(recorder.strings_read(), vec!["\n  x\n"]);
+    assert_eq!(recorder.strings_read(), vec!["\n  x"]);
 
     perform_edit(
         &mut tree,
@@ -559,13 +551,7 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
     )
     .unwrap();
 
-    assert_eq!(
-        code,
-        b"
-
-  x
-    "
-    );
+    assert_eq!(code, b"\n\n  x");
 
     let mut recorder = ReadRecorder::new(&code);
     let tree = parser
