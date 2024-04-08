@@ -510,8 +510,7 @@ fn test_parsing_after_editing_tree_that_depends_on_column_position() {
         .join("depends_on_column");
 
     let grammar_json = load_grammar_file(&dir.join("grammar.js"), None).unwrap();
-    let (grammar_name, parser_code) =
-        generate_parser_for_grammar(grammar_json.as_str()).unwrap();
+    let (grammar_name, parser_code) = generate_parser_for_grammar(grammar_json.as_str()).unwrap();
 
     let mut parser = Parser::new();
     parser
